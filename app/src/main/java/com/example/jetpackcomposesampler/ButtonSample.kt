@@ -1,5 +1,6 @@
 package com.example.jetpackcomposesampler
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -7,9 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,9 +19,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun ButtonSample() {
+fun SimpleButtonSample() {
     Button(
         onClick = { /*TODO*/ }
     ) {
@@ -31,7 +34,7 @@ fun ButtonSample() {
 @Preview(showBackground = true)
 @Composable
 fun ButtonSamplePreview() {
-    ButtonSample()
+    SimpleButtonSample()
 }
 
 @Composable
@@ -141,10 +144,47 @@ fun MultiSelectRadioButtonSample() {
     }
 }
 
-
 // see also checkbox sample
 @Preview(showBackground = true)
 @Composable
 fun MultiSelectRadioButtonSamplePreview() {
     MultiSelectRadioButtonSample()
+}
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun ButtonSampleScreen(navController: NavController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Button Sample") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { _ ->
+        LazyColumn {
+            item {
+                SimpleButtonSample()
+            }
+            item {
+                ButtonSampleWithIcon()
+            }
+            item {
+                IconButtonSample()
+            }
+            item {
+                OutlinedButtonSample()
+            }
+            item {
+                RadioButtonSample()
+            }
+//            item {
+//                MultiSelectRadioButtonSample()
+//            }
+        }
+    }
 }
