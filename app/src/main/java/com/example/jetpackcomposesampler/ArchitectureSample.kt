@@ -21,6 +21,9 @@ import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Layer
+ */
 @Serializable
 data class Task(
     @SerialName("userId")
@@ -31,6 +34,30 @@ data class Task(
     val completed: Boolean
 )
 
+interface TaskRepository {
+    suspend fun fetchTasks(): List<Task>
+}
+
+class TaskRepositoryImpl : TaskRepository {
+    private val client = HttpClient {
+        install(ContentNegotiation) {
+            json()
+        }
+    }
+
+    override suspend fun fetchTasks(): List<Task> {
+        val response = client.get("https://jsonplaceholder.typicode.com/todos")
+        if (response.status != OK) {
+            throw Exception("Failed to fetch todos")
+        }
+        delay(1000)
+        return response.body()
+    }
+}
+
+/**
+ * Logic Layer
+ */
 data class TaskListState(
     val tasks: List<Task>,
     val isLoading: Boolean,
@@ -75,27 +102,9 @@ fun rememberTaskListState(repository: TaskRepository): TaskListState {
     }
 }
 
-interface TaskRepository {
-    suspend fun fetchTasks(): List<Task>
-}
-
-class TaskRepositoryImpl : TaskRepository {
-    private val client = HttpClient {
-        install(ContentNegotiation) {
-            json()
-        }
-    }
-
-    override suspend fun fetchTasks(): List<Task> {
-        val response = client.get("https://jsonplaceholder.typicode.com/todos")
-        if (response.status != OK) {
-            throw Exception("Failed to fetch todos")
-        }
-        delay(1000)
-        return response.body()
-    }
-}
-
+/**
+ * Presentation Layer
+ */
 @Composable
 fun TaskListSample() {
     val state = rememberTaskListState(TaskRepositoryImpl())
