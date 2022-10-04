@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -99,46 +98,53 @@ fun TodoListSample() {
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            if (isError) {
-                Text(
-                    text = "Error",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            } else {
-                LazyColumn(
-                    content = {
-                        items(todos) { todo ->
-                            Row {
-                                Checkbox(
-                                    checked = todo.completed,
-                                    onCheckedChange = {
-                                        todos = todos.map { t ->
-                                            if (t.id == todo.id) {
-                                                t.copy(completed = it)
-                                            } else {
-                                                t
-                                            }
+            LazyColumn(
+                content = {
+                    items(todos) { todo ->
+                        Row {
+                            Checkbox(
+                                checked = todo.completed,
+                                onCheckedChange = {
+                                    todos = todos.map { t ->
+                                        if (t.id == todo.id) {
+                                            t.copy(completed = it)
+                                        } else {
+                                            t
                                         }
                                     }
-                                )
-                                Text(
-                                    text = todo.title,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .align(Alignment.CenterVertically),
-                                )
-                            }
-                            Divider()
+                                }
+                            )
+                            Text(
+                                text = todo.title,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .align(Alignment.CenterVertically),
+                            )
                         }
-                    },
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
+                        Divider()
+                    }
+                },
+                modifier = Modifier.padding(innerPadding)
+            )
             if (isLoading) {
                 CircularProgressIndicator(
                 )
             }
+        }
+        if (isError) {
+            AlertDialog(
+                onDismissRequest = { isError = false },
+                title = {
+                    Text(text = "Error")
+                },
+                text = {
+                    Text(text = "Failed to fetch todos")
+                },
+                confirmButton = {
+                    Button(onClick = { isError = false }) {
+                        Text(text = "OK")
+                    }
+                })
         }
     }
 }
