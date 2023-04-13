@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 /**
  * Infrastructure layer
  */
@@ -99,7 +98,8 @@ data class TaskListState(
     val isLoading: Boolean,
     val errorMessage: String?,
     val toggleCompleted: (Task) -> Unit,
-    val confirmError: () -> Unit
+    val confirmError: () -> Unit,
+    val setIsLoading: (Boolean) -> Unit
 )
 
 @Composable
@@ -147,7 +147,8 @@ fun rememberTaskListState(repository: TaskRepository): TaskListState {
                     }
                 }
             },
-            confirmError = { errorMessage = null }
+            confirmError = { errorMessage = null },
+            setIsLoading = { isLoading = it }
         )
     }
 }
